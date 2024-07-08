@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://AndrewBai-Marketing.github.io/al-folio/sitemap.xml
+Sitemap: https://AndrewBai-Marketing.github.io/sitemap.xml
