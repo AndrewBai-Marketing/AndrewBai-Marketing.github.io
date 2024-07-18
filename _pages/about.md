@@ -9,6 +9,7 @@ profile:
   image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
+    <p> Room 300 </p>
     <p>5751 South Woodlawn Avenue</p>
     <p>Chicago, Illinois </p>
 
