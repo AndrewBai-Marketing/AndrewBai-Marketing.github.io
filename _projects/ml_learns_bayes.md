@@ -3,6 +3,7 @@ layout: page
 title: Machine Learning Learns Bayes
 description: Joint with Thomas Wiemann and Sanjog Misra
 importance: 1
+category: research
 ---
 
 ## Abstract

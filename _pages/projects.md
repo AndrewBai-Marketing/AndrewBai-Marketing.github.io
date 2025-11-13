@@ -5,7 +5,7 @@ permalink: /projects/
 description: Research projects and work in progress.
 nav: true
 nav_order: 2
-display_categories: []
+display_categories: [research]
 horizontal: false
 ---
 
