@@ -1,0 +1,11 @@
+# This file keeps the _projects directory in git
+# Add your project files here using this format:
+#
+# ---
+# layout: page
+# title: Project Title
+# description: Brief description of your research project
+# importance: 1
+# ---
+#
+# Your project content here...
