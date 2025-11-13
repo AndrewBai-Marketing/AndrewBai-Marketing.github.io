@@ -20,10 +20,8 @@ social: true # includes social icons at the bottom of the page
 
 Welcome! I'm Andrew, a third-year PhD student in Quantitative Marketing at the University of Chicago Booth School of Business.
 
-My research interests include [add your research interests here - e.g., consumer behavior, marketing analytics, etc.].
+My research interests primarily lie in industrial organization and machine learning.
 
-Prior to my PhD, I [add your background - e.g., worked at X, studied Y, etc.].
-
-Feel free to explore my [projects](/projects/) or reach out via email. 
+Feel free to explore my [projects](/projects/) or reach out via email: sharng@uchicago.edu 
 
 
