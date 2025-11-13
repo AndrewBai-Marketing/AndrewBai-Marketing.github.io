@@ -6,7 +6,7 @@ subtitle: PhD Student, Quantitative Marketing
 
 profile:
   align: right
-  image: prof_pic.jpg
+  # image: prof_pic.jpg  # uncomment and upload your photo to assets/img/prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>Booth School of Business</p>
