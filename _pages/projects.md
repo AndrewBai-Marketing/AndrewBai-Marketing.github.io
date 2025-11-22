@@ -7,7 +7,7 @@ nav: true
 nav_order: 2
 ---
 
-## Working Papers
+## Work in Progress
 
 {% assign sorted_projects = site.projects | where: "category", "research" | sort: "importance" %}
 {% for project in sorted_projects %}
