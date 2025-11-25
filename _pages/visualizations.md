@@ -16,11 +16,11 @@ nav_order: 3
     position: relative;
     width: 100%;
     min-height: 600px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
     border-radius: 20px;
     overflow: hidden;
     margin: 2rem 0;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
   }
 
   .viz-header {
@@ -29,7 +29,7 @@ nav_order: 3
     left: 3rem;
     right: 3rem;
     z-index: 10;
-    color: white;
+    color: #2c3e50;
   }
 
   .viz-header h1 {
@@ -37,15 +37,16 @@ nav_order: 3
     font-weight: 700;
     margin: 0 0 1rem 0;
     letter-spacing: -0.02em;
-    color: white;
+    color: #1a1a1a;
   }
 
   .viz-header p {
     font-size: 1.25rem;
-    opacity: 0.9;
+    opacity: 0.7;
     max-width: 600px;
     line-height: 1.6;
     margin: 0;
+    color: #4a5568;
   }
 
   .viz-canvas {
@@ -66,57 +67,57 @@ nav_order: 3
     display: flex;
     gap: 1rem;
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     padding: 1rem 1.5rem;
     border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .viz-button {
     padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.04);
+    color: #2c3e50;
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 25px;
     cursor: pointer;
     font-size: 0.95rem;
     font-weight: 500;
     transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
   }
 
   .viz-button:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   }
 
   .viz-info {
     position: absolute;
     top: 3rem;
     right: 3rem;
-    color: white;
+    color: #2c3e50;
     font-size: 1rem;
     z-index: 10;
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     padding: 1rem 1.5rem;
     border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .viz-info strong {
     font-size: 1.5rem;
     display: block;
     margin-top: 0.25rem;
+    color: #1a1a1a;
   }
 
   .math-section {
     margin-top: 3rem;
     padding: 2rem;
-    background: rgba(102, 126, 234, 0.05);
+    background: rgba(0, 0, 0, 0.02);
     border-radius: 15px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #cbd5e0;
   }
 
   @media (max-width: 768px) {
@@ -202,7 +203,7 @@ class Particle {
     this.progress = 0;
     this.speed = 0.008 + Math.random() * 0.004;
     this.radius = 4;
-    this.hue = isSource ? 200 : 320;
+    this.color = isSource ? '#3b82f6' : '#64748b';
     this.pulsePhase = Math.random() * Math.PI * 2;
   }
 
@@ -222,22 +223,22 @@ class Particle {
   }
 
   draw() {
-    const pulse = Math.sin(time * 2 + this.pulsePhase) * 0.3 + 1;
+    const pulse = Math.sin(time * 2 + this.pulsePhase) * 0.2 + 1;
     const radius = this.radius * pulse;
 
-    // Glow effect
-    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius * 4);
-    gradient.addColorStop(0, `hsla(${this.hue}, 70%, 60%, 0.8)`);
-    gradient.addColorStop(0.5, `hsla(${this.hue}, 70%, 50%, 0.3)`);
-    gradient.addColorStop(1, `hsla(${this.hue}, 70%, 40%, 0)`);
+    // Subtle glow
+    const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius * 3);
+    gradient.addColorStop(0, this.color + '40');
+    gradient.addColorStop(0.5, this.color + '20');
+    gradient.addColorStop(1, this.color + '00');
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, radius * 4, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, radius * 3, 0, Math.PI * 2);
     ctx.fill();
 
     // Core
-    ctx.fillStyle = `hsl(${this.hue}, 80%, 70%)`;
+    ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -279,11 +280,8 @@ function computeMatching(sources, targets) {
 function animate() {
   time += 0.016;
 
-  // Create dark gradient background
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, 'rgba(102, 126, 234, 0.05)');
-  grad.addColorStop(1, 'rgba(118, 75, 162, 0.05)');
-  ctx.fillStyle = grad;
+  // Clear with subtle background
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Update and draw particles
@@ -291,7 +289,7 @@ function animate() {
     p.update();
   }
 
-  // Draw connection lines with gradient
+  // Draw connection lines
   const sources = particles.filter(p => p.isSource);
   const targets = particles.filter(p => !p.isSource);
 
@@ -303,12 +301,8 @@ function animate() {
       const src = sources[m.source];
       const tgt = targets[m.target];
 
-      const gradient = ctx.createLinearGradient(src.x, src.y, tgt.x, tgt.y);
-      gradient.addColorStop(0, 'hsla(200, 70%, 60%, 0.3)');
-      gradient.addColorStop(1, 'hsla(320, 70%, 60%, 0.3)');
-
-      ctx.strokeStyle = gradient;
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+      ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(src.x, src.y);
       ctx.lineTo(tgt.x, tgt.y);
