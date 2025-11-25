@@ -126,8 +126,8 @@ nav_order: 3
 
   .viz-info {
     position: absolute;
-    top: 3rem;
-    right: 3rem;
+    top: 1.5rem;
+    right: 1.5rem;
     color: #2c3e50;
     font-size: 1rem;
     z-index: 10;
