@@ -21,6 +21,12 @@ nav_order: 3
     overflow: hidden;
     margin: 2rem 0;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   }
 
   .viz-header {
@@ -38,6 +44,11 @@ nav_order: 3
     margin: 0 0 1rem 0;
     letter-spacing: -0.02em;
     color: #1a1a1a;
+    transition: color 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-header h1 {
+    color: #e2e8f0;
   }
 
   .viz-header p {
@@ -47,6 +58,11 @@ nav_order: 3
     line-height: 1.6;
     margin: 0;
     color: #4a5568;
+    transition: color 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-header p {
+    color: #94a3b8;
   }
 
   .viz-canvas {
@@ -71,6 +87,12 @@ nav_order: 3
     padding: 1rem 1.5rem;
     border-radius: 50px;
     border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-controls {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .viz-button {
@@ -85,10 +107,21 @@ nav_order: 3
     transition: all 0.3s ease;
   }
 
+  html[data-theme="dark"] .viz-button {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
   .viz-button:hover {
     background: rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  html[data-theme="dark"] .viz-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   }
 
   .viz-info {
@@ -103,6 +136,13 @@ nav_order: 3
     padding: 1rem 1.5rem;
     border-radius: 15px;
     border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-info {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
   }
 
   .viz-info strong {
@@ -110,6 +150,11 @@ nav_order: 3
     display: block;
     margin-top: 0.25rem;
     color: #1a1a1a;
+    transition: color 0.3s ease;
+  }
+
+  html[data-theme="dark"] .viz-info strong {
+    color: #e2e8f0;
   }
 
   .math-section {
@@ -129,6 +174,7 @@ nav_order: 3
     letter-spacing: 0.1em;
     color: #64748b;
     z-index: 10;
+    transition: color 0.3s ease;
   }
 
   .distribution-label.source {
@@ -136,9 +182,17 @@ nav_order: 3
     color: #3b82f6;
   }
 
+  html[data-theme="dark"] .distribution-label.source {
+    color: #60a5fa;
+  }
+
   .distribution-label.target {
     right: 15%;
     color: #64748b;
+  }
+
+  html[data-theme="dark"] .distribution-label.target {
+    color: #94a3b8;
   }
 
   @media (max-width: 768px) {
@@ -255,6 +309,15 @@ window.addEventListener('resize', resizeCanvas);
 let particles = [];
 let animating = true;
 let time = 0;
+let lastMatchingUpdate = 0;
+let cachedMatching = [];
+let cachedTotalCost = 0;
+const MATCHING_UPDATE_INTERVAL = 500; // Update matching every 500ms
+
+// Dark mode detection
+function isDarkMode() {
+  return document.documentElement.getAttribute('data-theme') === 'dark';
+}
 
 class Particle {
   constructor(x, y, targetX, targetY, isSource) {
@@ -268,8 +331,15 @@ class Particle {
     this.progress = Math.random(); // Random starting phase for variety
     this.speed = 0.002 + Math.random() * 0.001; // Slowed down 4x
     this.radius = 4;
-    this.color = isSource ? '#3b82f6' : '#64748b';
+    this.isSource = isSource;
     this.pulsePhase = Math.random() * Math.PI * 2;
+  }
+
+  getColor() {
+    if (this.isSource) {
+      return isDarkMode() ? '#60a5fa' : '#3b82f6';
+    }
+    return isDarkMode() ? '#94a3b8' : '#64748b';
   }
 
   update() {
@@ -292,12 +362,13 @@ class Particle {
   draw() {
     const pulse = Math.sin(time * 2 + this.pulsePhase) * 0.2 + 1;
     const radius = this.radius * pulse;
+    const color = this.getColor();
 
     // Subtle glow
     const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, radius * 3);
-    gradient.addColorStop(0, this.color + '40');
-    gradient.addColorStop(0.5, this.color + '20');
-    gradient.addColorStop(1, this.color + '00');
+    gradient.addColorStop(0, color + '40');
+    gradient.addColorStop(0.5, color + '20');
+    gradient.addColorStop(1, color + '00');
 
     ctx.fillStyle = gradient;
     ctx.beginPath();
@@ -305,7 +376,7 @@ class Particle {
     ctx.fill();
 
     // Core
-    ctx.fillStyle = this.color;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
     ctx.fill();
@@ -346,9 +417,11 @@ function computeMatching(sources, targets) {
 
 function animate() {
   time += 0.016;
+  const now = Date.now();
 
-  // Clear with subtle background
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  // Clear with subtle background (dark mode aware)
+  const bgColor = isDarkMode() ? 'rgba(26, 26, 46, 0.3)' : 'rgba(255, 255, 255, 0.3)';
+  ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // Update and draw particles
@@ -356,29 +429,37 @@ function animate() {
     p.update();
   }
 
-  // Draw connection lines
+  // Draw connection lines (update matching less frequently)
   const sources = particles.filter(p => p.isSource);
   const targets = particles.filter(p => !p.isSource);
 
   if (sources.length > 0 && targets.length > 0) {
-    const matching = computeMatching(sources, targets);
-    let totalCost = 0;
+    // Only recompute matching every MATCHING_UPDATE_INTERVAL ms
+    if (now - lastMatchingUpdate > MATCHING_UPDATE_INTERVAL) {
+      cachedMatching = computeMatching(sources, targets);
+      cachedTotalCost = 0;
+      for (const m of cachedMatching) {
+        cachedTotalCost += m.cost * m.cost;
+      }
+      lastMatchingUpdate = now;
+      document.getElementById('costDisplay').textContent = cachedTotalCost.toFixed(0);
+    }
 
-    for (const m of matching) {
+    // Draw lines using cached matching
+    const lineColor = isDarkMode() ? 'rgba(148, 163, 184, 0.3)' : 'rgba(148, 163, 184, 0.2)';
+    for (const m of cachedMatching) {
       const src = sources[m.source];
       const tgt = targets[m.target];
 
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(src.x, src.y);
-      ctx.lineTo(tgt.x, tgt.y);
-      ctx.stroke();
-
-      totalCost += m.cost * m.cost;
+      if (src && tgt) {
+        ctx.strokeStyle = lineColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(src.x, src.y);
+        ctx.lineTo(tgt.x, tgt.y);
+        ctx.stroke();
+      }
     }
-
-    document.getElementById('costDisplay').textContent = totalCost.toFixed(0);
   }
 
   // Draw particles on top
