@@ -167,7 +167,7 @@ nav_order: 3
 
   .distribution-label {
     position: absolute;
-    bottom: 6rem;
+    bottom: 7.5rem;
     font-size: 0.85rem;
     font-weight: 600;
     text-transform: uppercase;
