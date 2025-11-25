@@ -15,7 +15,7 @@ nav_order: 3
   .viz-hero {
     position: relative;
     width: 100%;
-    min-height: 600px;
+    min-height: min(600px, 80vh);
     background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
     border-radius: 20px;
     overflow: hidden;
@@ -120,23 +120,85 @@ nav_order: 3
     border-left: 4px solid #cbd5e0;
   }
 
+  .distribution-label {
+    position: absolute;
+    bottom: 6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #64748b;
+    z-index: 10;
+  }
+
+  .distribution-label.source {
+    left: 15%;
+    color: #3b82f6;
+  }
+
+  .distribution-label.target {
+    right: 15%;
+    color: #64748b;
+  }
+
   @media (max-width: 768px) {
-    .viz-header h1 {
-      font-size: 2rem;
+    .viz-hero {
+      min-height: min(500px, 70vh);
+      border-radius: 12px;
+      margin: 1rem 0;
     }
     .viz-header {
-      top: 2rem;
-      left: 2rem;
-      right: 2rem;
+      position: relative;
+      top: auto;
+      left: auto;
+      right: auto;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .viz-header h1 {
+      font-size: 1.75rem;
+    }
+    .viz-header p {
+      font-size: 1rem;
+    }
+    .viz-canvas {
+      position: relative;
+      height: 300px;
     }
     .viz-controls {
-      flex-direction: column;
-      gap: 0.5rem;
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 15px;
+    }
+    .viz-button {
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
     }
     .viz-info {
+      position: relative;
       top: auto;
-      bottom: 8rem;
-      right: 2rem;
+      right: auto;
+      bottom: auto;
+      margin: 1rem;
+      text-align: center;
+      display: inline-block;
+    }
+    .distribution-label {
+      bottom: auto;
+      top: 1rem;
+      font-size: 0.7rem;
+    }
+    .distribution-label.source {
+      left: 10%;
+    }
+    .distribution-label.target {
+      right: 10%;
     }
   }
 </style>
@@ -148,6 +210,9 @@ nav_order: 3
   </div>
 
   <canvas id="otCanvas" class="viz-canvas"></canvas>
+
+  <div class="distribution-label source">Source μ</div>
+  <div class="distribution-label target">Target ν</div>
 
   <div class="viz-info">
     Transport Cost
@@ -200,8 +265,8 @@ class Particle {
     this.targetX = targetX;
     this.targetY = targetY;
     this.isSource = isSource;
-    this.progress = 0;
-    this.speed = 0.008 + Math.random() * 0.004;
+    this.progress = Math.random(); // Random starting phase for variety
+    this.speed = 0.002 + Math.random() * 0.001; // Slowed down 4x
     this.radius = 4;
     this.color = isSource ? '#3b82f6' : '#64748b';
     this.pulsePhase = Math.random() * Math.PI * 2;
@@ -213,10 +278,12 @@ class Particle {
     this.progress += this.speed;
     if (this.progress >= 1) this.progress = 0;
 
-    // Smooth easing
-    const eased = this.progress < 0.5
-      ? 2 * this.progress * this.progress
-      : 1 - Math.pow(-2 * this.progress + 2, 2) / 2;
+    // Smooth ping-pong easing: goes 0->1->0 smoothly using sine wave
+    // This prevents the teleportation effect
+    const pingPong = Math.sin(this.progress * Math.PI);
+
+    // Apply additional easing for smoother acceleration/deceleration
+    const eased = pingPong * pingPong * (3 - 2 * pingPong);
 
     this.x = this.startX + (this.targetX - this.startX) * eased;
     this.y = this.startY + (this.targetY - this.startY) * eased;
